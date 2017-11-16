@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { DataService } from '../../services/data.service';
 
 @Component({
   selector: 'app-user',
@@ -12,8 +13,10 @@ export class UserComponent implements OnInit {
   email:string;
   address:Address;
   hobbies:string[];
+  posts:Post[];
+  isEdit:boolean = false;
 
-  constructor() { }
+  constructor(private dataservice: DataService) { }
 
   ngOnInit() {
     this.name = 'Bishmay';
@@ -25,16 +28,29 @@ export class UserComponent implements OnInit {
       city: 'BhaghyaLand'
     }
     this.hobbies = ['Eats Burger', 'Eats some more burger', 'Becomes burger king'];
+
+    this.dataservice.getPosts().subscribe((posts) => {
+        this.posts = posts;
+    });
   }
 
-  onClick(){
-    this.name = 'Ritik Srivastava';
-    
-  }
+
 
   addHobby(hobby){
     this.hobbies.unshift(hobby);
     return false;
+  }
+
+  deleteHobby(hobby){
+    for (var index = 0; index < this.hobbies.length; index++) {
+      if (this.hobbies[index]==hobby) {
+        this.hobbies.splice(index,1);
+      }
+    }
+  }
+
+  toggleEdit(){
+    this.isEdit = !this.isEdit;
   }
 
 }
@@ -43,4 +59,11 @@ interface Address{
   room:number,
   college:string,
   city:string
+}
+
+interface Post{
+  id:number,
+  title:string,
+  body:string,
+  userId:number
 }
